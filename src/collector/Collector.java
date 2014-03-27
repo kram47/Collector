@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package colector;
+package collector;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,7 +22,7 @@ import java.util.regex.*;
  *
  * @author Marc
  */
-public class Colector {
+public class Collector {
   
   /* ---------------------------------------------------------------- */
   /* ---------------------- PROPERTIES ------------------------------ */
@@ -37,7 +37,7 @@ public class Colector {
   /* -------------------- GETTER-SETTER ----------------------------- */
   
   
-  public Colector (){
+  public Collector (){
   
   }
   
