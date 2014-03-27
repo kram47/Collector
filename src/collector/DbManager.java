@@ -12,15 +12,14 @@ import java.util.List;
 
 
 /**
- * Classe repr�sentant l'ORM.
- * 	Ex�cute les preparedStatements et renvoie la clef g�n�r�e ou les resultats de la requ�te
- * 	Encapsule la connection � la BDD.
- * 
- * @author Marc CHARTON, Florian GUIHO
  *
+ * @author Marc
  */
 public class DbManager implements IDbManager {
 
+  /* ---------------------------------------------------------------- */
+  /* ---------------------- PROPERTIES ------------------------------ */
+    
 	/** L'URL de la base de donn�es avec laquelle cette classe s'interface. */
 	private String				url;
 	/** Le nom d'utilisateur de connexion */
@@ -28,52 +27,72 @@ public class DbManager implements IDbManager {
 	/** Le mot de passe de connexion */
 	private String 				password;
 	/** stockage de l'objet <code>connection</code> */
-	private Connection			connexion;
+	private Connection			connection;
 	/** stockage de l'objet <code>dbmanager</code> */
-	private static IDbManager                dbmanager;
-	
+	private static IDbManager               dbmanager;
+
+  
+  /* ---------------------------------------------------------------- */
+  /* ------------------ CONSTRUCTOR (Singleton) --------------------- */        
+        
+        
 	/** Encapsulation du constructeur (singleton) */
 	public static IDbManager getInstance(){
 		if (dbmanager == null)
 			dbmanager = new DbManager("", "", "");
 		return dbmanager;
 	}
-	
+        
 	/** Constructeur priv� (singleton) */
 	private DbManager(String url, String user, String password){
-		this.connexion = null;
+		this.connection = null;
 		this.url = url;
 		this.user = user;
 		this.password = password;
 	}
-	public String   getUrl() {
+        
+        
+        
+  /* ---------------------------------------------------------------- */
+  /* --------------------- GETTER-SETTER ---------------------------- */        
+        
+        
+	public String       getUrl() {
 		return url;
 	}
-	public void     setUrl(String url) {
+	public void         setUrl(String url) {
 		this.url = url;
 	}
-	public String   getUser() {
+	public String       getUser() {
 		return user;
 	}
-	public void     setUser(String user) {
+	public void         setUser(String user) {
 		this.user = user;
 	}
-	public String   getPassword() {
+	public String       getPassword() {
 		return password;
 	}
-	public void     setPassword(String password) {
+	public void         setPassword(String password) {
 		this.password = password;
 	}
+        public Connection   getConnection() {
+		return connection;
+	}
 
+  
+  /* ---------------------------------------------------------------- */
+  /* ------------------------ METHODS ------------------------------- */        
+        
+        
 	/**
-	 * Etablit la connexion avec la base de donn�es uniquement si la connexion n'a pas deja �t� �tablie.
+	 * Etablit la connexion avec la base de données uniquement si la connexion n'a pas deja été établie.
 	 * 
-	 * @throws RuntimeException si un probl�me de connexion survient
+	 * @throws RuntimeException si un problème de connexion survient
 	 */
-	public void	connect() throws RuntimeException{
-		if (connexion == null){
+	public void         connect() throws RuntimeException {
+		if (connection == null){
 			try{
-				connexion = DriverManager.getConnection(url, user, password);
+				connection = DriverManager.getConnection(url, user, password);
 			}
 			catch (SQLException ex){
 				throw new RuntimeException(ex.getMessage());
@@ -86,11 +105,11 @@ public class DbManager implements IDbManager {
 	 * 
 	 * @throws RuntimeException
 	 */
-	public void     close() throws RuntimeException{
-		if (connexion != null){
+	public void         close() throws RuntimeException {
+		if (connection != null){
 			try{
-				connexion.close();
-				connexion = null;
+				connection.close();
+				connection = null;
 			}
 			catch (SQLException ex){
 				throw new RuntimeException(ex.getMessage());
@@ -100,16 +119,15 @@ public class DbManager implements IDbManager {
         
         
         /**
-	 * Execute une requete.
+	 * Exécute une requète.
 	 * 
 	 * 
 	 */
-        public ResultSet execute(String requete)
-        {
+        public ResultSet    execute(String requete) {
             ResultSet result = null;
             
             try {
-                Statement stmt = connexion.createStatement();
+                Statement stmt = connection.createStatement();
                 result = stmt.executeQuery(requete);
             }
             catch (Exception e) { 
@@ -117,5 +135,20 @@ public class DbManager implements IDbManager {
             }
             
             return result;
+        }
+        
+        /**
+	 * Exécute une requète type insertInto
+	 * 
+	 */
+        public void         executeUpdate(String requete) {
+            try {
+                Statement stmt = connection.createStatement();
+                stmt.executeUpdate(requete);
+            }
+            catch (Exception e) { 
+                System.out.println(e);
+            }
+
         }
 }
