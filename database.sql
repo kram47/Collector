@@ -14,4 +14,3 @@ CREATE TABLE IF NOT EXISTS pages
    page_md5  VARCHAR( 32 ) NOT NULL,
    PRIMARY KEY (page_id) 
  );
-
