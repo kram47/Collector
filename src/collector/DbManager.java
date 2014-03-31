@@ -8,6 +8,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import sun.print.BackgroundLookupListener;
 
 
 
@@ -20,7 +21,7 @@ public class DbManager implements IDbManager {
   /* ---------------------------------------------------------------- */
   /* ---------------------- PROPERTIES ------------------------------ */
     
-	/** L'URL de la base de donn�es avec laquelle cette classe s'interface. */
+	/** L'URL de la base de donnees avec laquelle cette classe s'interface. */
 	private String				url;
 	/** Le nom d'utilisateur de connexion */
 	private String				user;
@@ -43,7 +44,7 @@ public class DbManager implements IDbManager {
 		return dbmanager;
 	}
         
-	/** Constructeur priv� (singleton) */
+	/** Constructeur privé (singleton) */
 	private DbManager(String url, String user, String password){
 		this.connection = null;
 		this.url = url;
@@ -131,7 +132,7 @@ public class DbManager implements IDbManager {
                 result = stmt.executeQuery(requete);
             }
             catch (Exception e) { 
-                System.out.println(e);
+                System.err.println(e);
             }
             
             return result;
@@ -147,7 +148,24 @@ public class DbManager implements IDbManager {
                 stmt.executeUpdate(requete);
             }
             catch (Exception e) { 
-                System.out.println(e);
+                System.err.println(e);
+            }
+
+        }
+        
+        /**
+	 * Exécute une requète type insertInto en prepared Statement
+	 * 
+	 */
+        public void         executeUpdatePrepared(String query, String pageHtml) {
+            try {
+                PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+                preparedStatement.setString(1, pageHtml);
+                preparedStatement.executeUpdate(query);
+            }
+            catch (Exception e) { 
+                //System.err.println(e);
+                
             }
 
         }

@@ -2,6 +2,8 @@ package collector;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,8 +21,12 @@ public class Md5Manager {
      * @return md5
      * @throws NoSuchAlgorithmException 
      */
-    public String   getMd5String(String str) throws NoSuchAlgorithmException {        
-        this.md = MessageDigest.getInstance("MD5");
+    public String   getMd5String(String str) {        
+        try {
+            this.md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Md5Manager.class.getName()).log(Level.SEVERE, null, ex);
+        }
         md.update(str.getBytes());
         byte byteData[] = md.digest();
         
