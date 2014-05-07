@@ -16,7 +16,7 @@ import sun.print.BackgroundLookupListener;
  *
  * @author Marc
  */
-public class DbManager implements IDbManager {
+public class DbManager2 implements IDbManager {
 
   /* ---------------------------------------------------------------- */
   /* ---------------------- PROPERTIES ------------------------------ */
@@ -40,12 +40,12 @@ public class DbManager implements IDbManager {
 	/** Encapsulation du constructeur (singleton) */
 	public static IDbManager getInstance(){
 		if (dbmanager == null)
-			dbmanager = new DbManager("", "root", "");
+			dbmanager = new DbManager2("", "root", "");
 		return dbmanager;
 	}
         
 	/** Constructeur privé (singleton) */
-	private DbManager(String url, String user, String password){
+	private DbManager2(String url, String user, String password){
 		this.connection = null;
 		this.url = url;
 		this.user = user;
