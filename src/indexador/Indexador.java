@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package indexador;
+
 import collector.DbManager;
 import collector.DbManager2;
 import collector.IDbManager;
