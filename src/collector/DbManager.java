@@ -164,7 +164,7 @@ public class DbManager implements IDbManager {
                 preparedStatement.executeUpdate();
             }
             catch (Exception e) { 
-                //System.err.println(e);
+                System.err.println(e);
                 
             }
 

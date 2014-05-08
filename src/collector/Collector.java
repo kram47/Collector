@@ -94,7 +94,7 @@ public class Collector {
         String md5 = md.getMd5String(page);
 
         IDbManager d = DbManager.getInstance();
-        String query = "INSERT INTO pages(page_name, page_content, page_md5) VALUES(\"" + name + "\", ?, \"" + md5 + "\");";
+        String query = "INSERT INTO documents(document_name, document_url, document_title, document_content, document_md5) VALUES(\"" + name + "\", '', '', ?, \"" + md5 + "\");";
         d.executeUpdatePrepared(query, page);
     }
 
@@ -175,12 +175,12 @@ public class Collector {
     private boolean   isPageExistsDB(String page) {
         IDbManager d = DbManager.getInstance();
         Md5Manager md = new Md5Manager();
-        String query = "SELECT page_md5 FROM pages";
+        String query = "SELECT document_md5 FROM documents";
         ResultSet results = d.execute(query);
 
         try {        
               while (results.next()) {
-                  String md5 = results.getString("page_md5");
+                  String md5 = results.getString("document_md5");
                   if (md.isEqualMd5String(md5, md.getMd5String(page)) == true)
                       return true;
               }
@@ -233,7 +233,7 @@ public class Collector {
           if (!isPageExistsDB(myurl.getLink()))
           {
               extractLinksCurrentPage();
-               try { this.storePages(this.currentPage, "page_" + ++i);} catch (Exception e) {System.err.println(e); }
+               try { this.storePages(this.currentPage, "document_" + ++i);} catch (Exception e) {System.err.println(e); }
           }
          
           int j = 0;
@@ -245,7 +245,7 @@ public class Collector {
               if (!isPageExistsDB(myurl.getLink()))
               {
                 extractLinksCurrentPage();
-                this.storePages(this.currentPage, "page_" + i + "_" + ++j);
+                this.storePages(this.currentPage, "document_" + i + "_" + ++j);
               }
           }
         }

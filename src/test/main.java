@@ -26,8 +26,8 @@ public class main {
         
         // Connection to the database
         IDbManager d = DbManager.getInstance();
-	// d.setUrl("jdbc:mysql://localhost:3306/topicos_collector");
-	// d.connect();
+	d.setUrl("jdbc:mysql://localhost:3306/topicos_sri");
+	d.connect();
 
         // We fill the queue with the default value of the class
 //        Queue urls = new LinkedList();
@@ -39,8 +39,8 @@ public class main {
 //        Collector myColector  = new Collector();
 //        myColector.setUrls(urls);
 //        myColector.run();
-          Indexador ind = new Indexador();
-          ind.run();
+          Indexador indexador = new Indexador();
+          indexador.run();
 
           
         
