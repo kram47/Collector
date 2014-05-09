@@ -84,17 +84,17 @@ public class Collector {
      * @param page
      * @param name 
      */
-    public void       storePages (String page, String name) {
+    public void       storePages (String page, String name, MyUrl myurl) {
         
         page = page.replaceAll("\\<div id=\"divNaoImprimir\">.*</div>", "");
         page = page.replaceAll("\\<td width=\"48%\" valign=\"top\">.*</td>", "");
         page = page.replaceAll("\\<div id=\"divImpressao\" style=\"min-height:150px;\">.*</div>", "");
-        //page = page.replaceAll("\\<[^<]*>", "");
+        page = page.replaceAll("\\<[^<]*>", "");
         Md5Manager md = new Md5Manager();
         String md5 = md.getMd5String(page);
 
         IDbManager d = DbManager.getInstance();
-        String query = "INSERT INTO documents(document_name, document_url, document_title, document_content, document_md5) VALUES(\"" + name + "\", '', '', ?, \"" + md5 + "\");";
+        String query = "INSERT INTO documents(document_name, document_url, document_title, document_content, document_md5) VALUES('" + name + "', '"+ myurl.getLink() +"', '', ?, '" + md5 + "');";
         d.executeUpdatePrepared(query, page);
     }
 
@@ -233,7 +233,7 @@ public class Collector {
           if (!isPageExistsDB(myurl.getLink()))
           {
               extractLinksCurrentPage();
-               try { this.storePages(this.currentPage, "document_" + ++i);} catch (Exception e) {System.err.println(e); }
+               try { this.storePages(this.currentPage, "document_" + ++i, myurl);} catch (Exception e) {System.err.println(e); }
           }
          
           int j = 0;
@@ -245,7 +245,7 @@ public class Collector {
               if (!isPageExistsDB(myurl.getLink()))
               {
                 extractLinksCurrentPage();
-                this.storePages(this.currentPage, "document_" + i + "_" + ++j);
+                this.storePages(this.currentPage, "document_" + i + "_" + ++j, myurl);
               }
           }
         }

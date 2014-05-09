@@ -31,55 +31,84 @@ public class Indexador {
     List<Document>  _collection;
     InvertedIndex   _index;
     
-    public Indexador() {
+    public Indexador() 
+    {
         this._collectionSize = -1;
         this._collection = new ArrayList<Document>();
         this._index = new InvertedIndex(); 
-        
         this._db = DbManager.getInstance();
     }
-    
-  public int getCollectionSize () {
-    return _collectionSize;
-  }
-  
 
-  public void extractPagesNumber() {
-    
-  }
- 
-  private int calculateCollectionSize()
-  {
-      // requete SQL pour recuperer la taille de la base (DB COLLECTEUR)
-      // SELECT Count(*) FROM pages;
-      this._collectionSize = 10;
-      
-      return this._collectionSize;
-  }
-  
-  
-  public void run (){
-    
-    this.calculateCollectionSize();
-    this.TEST_fillCollection();
-           
-    
-    for (int i = 0 ; i < this._collectionSize ; ++i)
+    private int calculateCollectionSize()
     {
-        Document current_doc = _collection.get(i);
-        for (String current_word : current_doc.getWords())
+        ResultSet rs = this._db.execute("SELECT COUNT( * ) AS collectionSize FROM  `documents`");
+        System.out.println("SELECT COUNT( * ) AS collectionSize FROM  `documents`");
+        try 
         {
-            _index.addAppearance(current_word, current_doc.getName());
+            if (rs.next())
+                this._collectionSize = rs.getInt("collectionSize");
         }
-    }
+        catch (SQLException ex) 
+        {   Logger.getLogger(Indexador.class.getName()).log(Level.SEVERE, null, ex); }
         
+        return this._collectionSize;
+    }
+  
+    private Document getNextDocument(int i)
+    {
+        Document doc = null;
+        
+        ResultSet rs = this._db.execute("SELECT * FROM documents WHERE document_id = " + ++i + ";");
+        System.out.println("SELECT * FROM documents WHERE document_id = " + i + ";");
+        try 
+        {
+            if (rs.next())
+            {
+                doc = new Document(rs.getString("document_name"), null);
+                doc.setUrl(rs.getString("document_url"));
+                doc.setTitle(rs.getString("document_title"));
+                doc.setContent(rs.getString("document_content"));
+            }
+        }
+        catch (SQLException ex) 
+        {   Logger.getLogger(Indexador.class.getName()).log(Level.SEVERE, null, ex); }
+        
+        return doc;
+    }
     
-    // TESTS 
-    _index.toString();
-    _index.getFrequency("mot39", "doc1");
-    _index.getWordFrequencies("mot2");
-    _index.getVocabulary();
-  }
+    private void calculateFrequencies() 
+    {
+        for (int i = 0 ; i < this._collectionSize ; ++i)
+        {   
+            Document current_doc = getNextDocument(i);
+            
+            System.out.println("current_doc.name = " + current_doc.getName() );
+            System.out.println("current_doc.url = " + current_doc.getUrl() );
+            System.out.println("current_doc.title = " + current_doc.getTitle() );
+            System.out.println("current_doc.content = " + current_doc.getContent() );
+            System.out.println("---------------");
+//            for (String current_word : current_doc.getWords())
+//            {
+//                _index.addAppearance(current_word, current_doc.getName());
+//            }
+        }
+
+    }
+    
+    public void run ()
+    {
+        this.calculateCollectionSize();
+        System.out.println("this._collectionSize = " + this._collectionSize);
+        this.TEST_fillCollection();
+
+        this.calculateFrequencies();
+        
+//        TESTS 
+        _index.toString();
+//        _index.getFrequency("mot39", "doc1");
+//        _index.getWordFrequencies("mot2");
+        _index.getVocabulary();
+    }
   
   
     private void TEST_fillCollection()
@@ -106,26 +135,6 @@ public class Indexador {
         _collection.add(doc9);
         _collection.add(doc10);
     }
-  
-
-    private void TEST_selectDocs()
-    {
-        // Test base
-        ResultSet rs = this._db.execute("SELECT * FROM documents;");
-        try {
-            while (rs.next())
-            {
-                String lastName = rs.getString("document_name");
-                String page = rs.getString("document_content");
-                System.out.println(lastName + " :");
-                System.out.println(page);
-                System.out.println("------------------\n");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Indexador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
   
 }
 
