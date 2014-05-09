@@ -99,7 +99,14 @@ public class Document {
     public String[] getWords() {
         return _words;
     }
- 
+
+    /**
+     * @param words the _words to set
+     */
+    public void setWords(String[] words) {
+        this._words = words;
+    }
+    
     
     
 }

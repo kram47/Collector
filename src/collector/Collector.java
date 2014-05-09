@@ -90,6 +90,7 @@ public class Collector {
         page = page.replaceAll("\\<td width=\"48%\" valign=\"top\">.*</td>", "");
         page = page.replaceAll("\\<div id=\"divImpressao\" style=\"min-height:150px;\">.*</div>", "");
         page = page.replaceAll("\\<[^<]*>", "");
+        page = page.replaceAll("\\<!--*-->", "");
         Md5Manager md = new Md5Manager();
         String md5 = md.getMd5String(page);
 
@@ -103,7 +104,7 @@ public class Collector {
      * Extracts url from the page and push it in the queue called newUrls
      * @param page 
      */
-    public void       extractLinksCurrentPage() {
+    public void       extractLinksCurrentPage(MyUrl myurl) {
         String link = new String();
 
         this.currentPage = this.currentPage.toLowerCase();
@@ -119,18 +120,19 @@ public class Collector {
           int begin = m.group().indexOf("\"");
           link = m.group().substring(begin);
           link = link.replaceAll("\"","");
-          link = this.relativeToAbsolute(link);
+          link = this.relativeToAbsolute(link, myurl);
           
           if (link.indexOf("http://") == -1 || link.indexOf("http://") > 1) { continue; }
             MyUrl currentUrl = new MyUrl(link);
           
-          if (!this.isUrlExistsQueue(currentUrl.getLink(), this.newUrls) && currentUrl.isFileCorrect() == true)
+          if (currentUrl.isFileCorrect() == true && this.urlRoot.compareTo(currentUrl.getLink()) != 0)
           {
-              if (this.isRootNew(currentUrl) == false)
-              {
-                  this.newUrls.add(currentUrl.getLink());
-                  //System.out.println("jai ajoute : " + currentUrl.getLink());
-              }
+              if (!this.isUrlExistsQueue(currentUrl.getLink(), this.newUrls) && !this.isUrlExistsQueue(currentUrl.getLink(), this.urls))
+                if (this.isRootNew(currentUrl) == false)
+                {
+                    this.newUrls.add(currentUrl.getLink());
+                    System.out.println("I add : " + currentUrl.getLink());
+                }
           }
         }
     }
@@ -141,11 +143,38 @@ public class Collector {
      * @param url
      * @return url_root
      */
-    private String    relativeToAbsolute(String link) {
-        if (link != null && link.length() > 0 && link.charAt(0) == '/') 
+    private String    relativeToAbsolute(String link, MyUrl myurl) {
+        String current_url = myurl.getLink();
+        String protoc = "http://";
+        
+        // We get rid of the protocole and keep it to use it again after
+        if (current_url.indexOf("http://") != -1)
+            current_url = current_url.replace("http://", "");
+        if (current_url.indexOf("https://") != -1)
         {
-            link = link.replaceFirst("/", this.urlRoot + "/");
+            current_url = current_url.replace("https://", "");
+            protoc = "https://";
+        }
+        
+        if (link != null && link.length() > 0  && link.indexOf("http") == -1 && link.indexOf("www.") == -1) 
+        {
+            if (link.charAt(0) == '/')
+                link = link.replaceFirst("/", this.urlRoot + "/");   
+            else 
+            {
+                 if (current_url.indexOf("/") != -1)
+                 {
+                    int lastSlash = current_url.lastIndexOf("/");
+                    String lastPart = current_url.substring(lastSlash);
+                    if (lastPart.indexOf(".") != -1)
+                    {
+                        current_url = current_url.substring(0, lastSlash);
+                    }  
+                 }
+                 link = protoc + current_url + "/" + link;
+            }
         }      
+        
         return link;
     }
 
@@ -200,6 +229,8 @@ public class Collector {
         String newRoot = new String();
         
         newRoot = myurl.getRoot();
+        if (newRoot.indexOf("http://") == -1)
+            newRoot = "http://" + newRoot;
         if (newRoot.compareTo(this.urlRoot) != 0)
         {
             if (newRoot.indexOf("www2") != -1 || newRoot.indexOf("www3") != -1 || newRoot.indexOf("www4") != -1)
@@ -228,12 +259,14 @@ public class Collector {
         {
           System.out.println("---------------------------------");
           MyUrl myurl = new MyUrl( (String)this.urls.poll() );
+          System.out.println("We gonna work on : " + myurl.getLink());
           this.urlRoot = myurl.getUrl().getProtocol() + "://" + myurl.getRoot();
+          System.out.println("Root : " + this.urlRoot);
           this.currentPage = this.collectPage(myurl);
           if (!isPageExistsDB(myurl.getLink()))
           {
-              extractLinksCurrentPage();
-               try { this.storePages(this.currentPage, "document_" + ++i, myurl);} catch (Exception e) {System.err.println(e); }
+              extractLinksCurrentPage(myurl);
+              try { this.storePages(this.currentPage, "document_" + ++i, myurl);} catch (Exception e) {System.err.println(e); }
           }
          
           int j = 0;
@@ -241,16 +274,16 @@ public class Collector {
           while (this.newUrls.size() > 0)
           {
               myurl = new MyUrl( (String)this.newUrls.poll() );
+              System.out.println("We gonna work on : " + myurl.getLink());
               this.currentPage = this.collectPage(myurl);
               if (!isPageExistsDB(myurl.getLink()))
               {
-                extractLinksCurrentPage();
+                extractLinksCurrentPage(myurl);
                 this.storePages(this.currentPage, "document_" + i + "_" + ++j, myurl);
               }
           }
         }
     }
-
     
   
 }

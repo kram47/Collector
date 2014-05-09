@@ -76,6 +76,15 @@ public class Indexador {
         return doc;
     }
     
+    private String[] splitDocumentByWords(Document doc)
+    {
+        String[] words = doc.getContent().split("[\\s\\W]+");
+        
+        if (words != null)
+            doc.setWords(words);
+        return words;
+    }
+    
     private void calculateFrequencies() 
     {
         for (int i = 0 ; i < this._collectionSize ; ++i)
@@ -87,10 +96,18 @@ public class Indexador {
             System.out.println("current_doc.title = " + current_doc.getTitle() );
             System.out.println("current_doc.content = " + current_doc.getContent() );
             System.out.println("---------------");
+            
+            for (String word : splitDocumentByWords(current_doc)){
+                System.out.println(word);
+            }
 //            for (String current_word : current_doc.getWords())
 //            {
 //                _index.addAppearance(current_word, current_doc.getName());
 //            }
+            
+//            persistDocument();
+//            persistWords();
+//            persistIndex();
         }
 
     }

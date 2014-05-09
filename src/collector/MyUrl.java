@@ -96,18 +96,19 @@ public class MyUrl {
     // And then we add the link to list of newUrls
     public boolean isFileCorrect()
     {
+        String[] extensions = { "css", "scss", "sass", "js", 
+                                "ico", "jpg", "jpeg", "bmp", "png", "psd", "jpf", 
+                                "mp3", "mp4", "wav", "flac", "ogg", "m4a", "aac", "m3u",
+                                "m2k", "avi", "mkv", "wmp", "mov"};
+        
+        for (String ext : extensions)
+            if (link.indexOf("." + ext) != -1)
+                return false;
+        
         if (link.equals("") || link == null)
-        {
             return false;
-        }
-        if (link.indexOf(".css") != -1 || link.indexOf(".js") != -1 || link.indexOf(".ico") != -1)
-        {
+        if (link.indexOf("#") != -1 || link.indexOf("../") != -1 || link.indexOf("javascript") != -1 || link.indexOf("mailto:") != -1)
             return false;
-        }
-        if (link.compareTo("#") == 0 && link.indexOf("../") != -1)
-        {
-            return false;
-        }
         return true;
     }
     

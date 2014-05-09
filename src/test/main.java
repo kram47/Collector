@@ -46,7 +46,8 @@ public class main {
             
             // We fill the queue with the default value of the class
             Queue urls = new LinkedList();
-            urls.add("http://www.stf.jus.br/portal/principal/principal.asp");
+            urls.add("http://www.kram47.fr");
+            //urls.add("http://www.stf.jus.br/portal/principal/principal.asp");
             //urls.add("http://www.camara.gov.br");
             //urls.add("http://www.senado.gov.br/");
 
