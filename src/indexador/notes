@@ -1,0 +1,44 @@
+CURRENT_URL 
+
+X www.kram47.fr
+
+X www.kram47.fr/
+X www.kram47.fr/sousmenu
+X www.kram47.fr/sousmenu/
+X www.kram47.fr/sousmenu/page.php
+X www.kram47.fr/sousmenu/page.php?coucou=sjd
+X http://www.kram47.fr
+X http://www.kram47.fr/
+X http://www.kram47.fr/sousmenu
+ http://www.kram47.fr/sousmenu/
+ http://www.kram47.fr/sousmenu/page.php
+ http://www.kram47.fr/sousmenu/page.php?coucou=sjd
+ https://www.kram47.fr
+ https://www.kram47.fr/
+ https://www.kram47.fr/sousmenu
+ https://www.kram47.fr/sousmenu/
+ https://www.kram47.fr/sousmenu/page.php
+ https://www.kram47.fr/sousmenu/page.php?coucou=sjd
+ 
+
+
+LINK
+
+X http://www.kram47.fr/...
+X https://www.kram47.fr/...
+X www.kram47.fr/...
+X /menuracine
+X /menuracine/
+X /menuracine/page.php
+X /menuracine/page.php?coucou=dckdc&yo=d12
+ 
+ page.php
+ sousmenu
+ sousmenu/
+ sousmenu/page.php
+ sousmenu/page.php?coucou=dckdc&yo=d12
+ sousmenu/autremenu
+ sousmenu/autremenu/
+ sousmenu/autremenu/page.php
+ sousmenu/autremenu/page.php?coucou=dckdc&yo=d12
+

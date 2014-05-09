@@ -201,17 +201,23 @@ public class Collector {
      * @param page, the page to check
      * @return true if the page exists
      */
-    private boolean   isPageExistsDB(String page) {
+    private boolean   isPageExistsDB(String url) {
         IDbManager d = DbManager.getInstance();
         Md5Manager md = new Md5Manager();
-        String query = "SELECT document_md5 FROM documents";
+        String query = "SELECT document_md5, document_url FROM documents";
         ResultSet results = d.execute(query);
 
         try {        
               while (results.next()) {
-                  String md5 = results.getString("document_md5");
-                  if (md.isEqualMd5String(md5, md.getMd5String(page)) == true)
+                  String document_md5 = results.getString("document_md5");
+                  String document_url = results.getString("document_url");
+                  if (md.isEqualMd5String(document_md5, md.getMd5String(url)) == true)
                       return true;
+                  if (document_url.compareTo(url) == 0)
+                  {
+                      System.out.println("L'url de cette page existe en BDD, je l'ajoute pas");
+                      return true;
+                  }
               }
           } catch (Exception e) { System.err.println("Error checking MD5 : " + e); }
         return false;
@@ -287,30 +293,3 @@ public class Collector {
     
   
 }
-
-
-
-
-//    /**
-//     * Extract the root website (without any '/') from the link
-//     * @param url
-//     * @return root
-//     */
-//    private String      getUrlRoot(String url) {
-//        String root = new String();
-//
-//        if (url.indexOf("http://") != -1)
-//          {
-//              root = url.replace("http://", "");
-//              root = root.substring(0, root.indexOf("/"));
-//              root = root.replace("www.", "http://www.");
-//          }
-//        else if (url.indexOf("https://") != -1)
-//          {
-//              root = url.replace("https://", "");
-//              root = root.substring(0, root.indexOf("/"));
-//              root = root.replace("www.", "https://www.");
-//          }
-//
-//        return root;
-//    }
