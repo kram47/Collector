@@ -10,6 +10,9 @@ package indexador;
  */
 public class Document {
     
+    /* ---------------------------------------------------------------- */
+    /* ---------------------- PROPERTIES ------------------------------ */      
+    
     private String      _name;
     private String      _url;
     private String      _title;
@@ -17,11 +20,19 @@ public class Document {
     private float       _r;
     private String[]    _words;
     
+
+    /* ---------------------------------------------------------------- */
+    /* ---------------------- CONSTRUCTOR  ---------------------------- */     
+    
     public Document (String name, String[] words)
     {
         this._name = name;
         this._words = words;
     }
+    
+    
+    /* ---------------------------------------------------------------- */
+    /* --------------------- GETTER-SETTER ---------------------------- */       
 
     /**
      * @return the _name
@@ -106,6 +117,12 @@ public class Document {
     public void setWords(String[] words) {
         this._words = words;
     }
+    
+
+    /* ---------------------------------------------------------------- */
+    /* ------------------------ METHODS ------------------------------- */        
+    
+    
     
     
     

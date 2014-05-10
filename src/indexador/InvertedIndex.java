@@ -12,13 +12,24 @@ import java.util.Hashtable;
  * @author 492403
  */
 public class InvertedIndex {
+
+    /* ---------------------------------------------------------------- */
+    /* ---------------------- PROPERTIES ------------------------------ */
+    
     Hashtable<String, Hashtable<String, Integer>> _invertedIndex;
 
+    
+    /* ---------------------------------------------------------------- */
+    /* ---------------------- CONSTRUCTOR  ---------------------------- */      
     
     public InvertedIndex()
     {
         _invertedIndex = new Hashtable<String, Hashtable<String, Integer>>();
     }
+    
+    
+    /* ---------------------------------------------------------------- */
+    /* ------------------------ METHODS ------------------------------- */         
     
     public int getFrequency(String word_str, String doc_str)
     {
@@ -94,6 +105,10 @@ public class InvertedIndex {
         System.out.println(sb.toString());
         return sb.toString();
     }
+    
+    
+    /* ---------------------------------------------------------------- */
+    /* ------------------------ OUTPUT -------------------------------- */    
     
     public String toString()
     {

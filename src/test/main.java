@@ -64,9 +64,6 @@ public class main {
           Indexador indexador = new Indexador();
           indexador.run();
         }
-
-          
-        
               
     }
 }
