@@ -13,6 +13,7 @@ public class Document {
     /* ---------------------------------------------------------------- */
     /* ---------------------- PROPERTIES ------------------------------ */      
     
+    private int         _id;
     private String      _name;
     private String      _url;
     private String      _title;
@@ -118,9 +119,25 @@ public class Document {
         this._words = words;
     }
     
+    
+    /**
+     * @return the _id
+     */
+    public int getId() {
+        return _id;
+    }
+
+    /**
+     * @param id the _id to set
+     */
+    public void setId(int id) {
+        this._id = id;
+    }
 
     /* ---------------------------------------------------------------- */
     /* ------------------------ METHODS ------------------------------- */        
+
+
     
     
     

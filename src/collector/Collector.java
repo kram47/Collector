@@ -77,8 +77,42 @@ public class Collector {
       return page.toString ();
     }
 
+    public String    replaceAccents(String page)
+    {
+        /** 
+         * Replacing the HTML encoding 
+         * '&eacute;' => 'é' => e
+         */
+        System.out.println("avant: " + page);
+        page = page.replaceAll("\\&(.)(.*?);", "$1");
+        
+        /**
+         * Replacing directly the accents 
+         * 'é' => 'e'
+         */
+        String[][] accents = {  {"e", "é", "è", "ê"}, 
+                                {"a", "á", "à", "â", "ã"},
+                                {"i", "í", "ì", "î"},
+                                {"o", "ó", "ò", "ô", "õ"},
+                                {"u", "ú", "ù", "û"},
+                                {"c", "ç"},
+                                {"n", "ñ"} };
+        
+        for (String[] letters : accents)
+        {
+            String withoutAccent = letters[0];
+            for (String pattern : letters)
+            {
+                if (pattern != withoutAccent)
+                    page = page.replaceAll(pattern, withoutAccent);
+            }
+        }
+        
+        System.out.println("apres: " + page);
+        return page;
+    }
 
-
+    
     /**
      * Store a sketch of the page
      * @param page
@@ -91,6 +125,7 @@ public class Collector {
         page = page.replaceAll("\\<div id=\"divImpressao\" style=\"min-height:150px;\">.*</div>", "");
         page = page.replaceAll("\\<[^<]*>", "");
         page = page.replaceAll("\\<!--*-->", "");
+        page = replaceAccents(page);
         Md5Manager md = new Md5Manager();
         String md5 = md.getMd5String(page);
 

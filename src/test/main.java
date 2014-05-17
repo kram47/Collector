@@ -7,6 +7,7 @@ import collector.IDbManager;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -30,7 +31,7 @@ public class main {
         IDbManager d = DbManager.getInstance();
 	d.setUrl("jdbc:mysql://localhost:3306/topicos_sri");
 	d.connect();
-
+        
         // Creation of the scanner to get the input
         Scanner s = new Scanner(System.in);
         System.out.println("1. Collector");
@@ -41,12 +42,14 @@ public class main {
         
         if (choose.compareTo("1") == 0)
         {
-            System.out.println("---------------------------------");
+            System.out.println("------ ---------------------------");
             System.out.println("            Collector");
             
             // We fill the queue with the default value of the class
             Queue urls = new LinkedList();
-            urls.add("http://www.kram47.fr");
+            
+            urls.add("http://www.traducteur-assermente-lyon.fr/");
+            //urls.add("http://www.kram47.fr");
             //urls.add("http://www.stf.jus.br/portal/principal/principal.asp");
             //urls.add("http://www.camara.gov.br");
             //urls.add("http://www.senado.gov.br/");
@@ -54,15 +57,23 @@ public class main {
             // We Launch the collector
             Collector myColector  = new Collector();
             myColector.setUrls(urls);
+                    
             myColector.run();
         }
         else if (choose.compareTo("2") == 0)
         {
-          System.out.println("---------------------------------");
-          System.out.println("            Indexador");
-          System.out.println("---------------------------------");
-          Indexador indexador = new Indexador();
-          indexador.run();
+            System.out.println("---------------------------------");
+            System.out.println("            Indexador");
+            System.out.println("---------------------------------");
+            Indexador indexador = new Indexador();
+            try 
+            {
+                indexador.run();
+            }
+            catch (SQLException ex) 
+            {
+                Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
               
     }

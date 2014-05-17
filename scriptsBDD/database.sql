@@ -45,12 +45,12 @@ CREATE TABLE IF NOT EXISTS documents
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
-#       TABLE : pair
+#       TABLE : pairs
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 
 
-CREATE TABLE IF NOT EXISTS pair
+CREATE TABLE IF NOT EXISTS pairs
  (  
     pair_word_id BIGINT( 4 ) UNSIGNED NOT NULL,
     pair_document_id BIGINT( 4 ) UNSIGNED NOT NULL,

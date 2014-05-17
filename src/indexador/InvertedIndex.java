@@ -4,8 +4,15 @@
  */
 package indexador;
 
+import collector.IDbManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -21,7 +28,7 @@ public class InvertedIndex {
     
     /* ---------------------------------------------------------------- */
     /* ---------------------- CONSTRUCTOR  ---------------------------- */      
-    
+            
     public InvertedIndex()
     {
         _invertedIndex = new Hashtable<String, Hashtable<String, Integer>>();
@@ -48,7 +55,7 @@ public class InvertedIndex {
         return freq;
     }
     
-    public Hashtable<String, Integer> getWordFrequencies(String word_str)
+    public Hashtable<String, Integer> getWordDocsList(String word_str)
     {
         Hashtable<String, Integer> docs = null;
         
@@ -60,6 +67,26 @@ public class InvertedIndex {
         
         return docs;
     }
+//    
+//    public List getDocs()
+//    {
+//        List list_docs = new LinkedList<String>();
+//        Hashtable<String, Integer> ht_docs;
+//        Enumeration<String> docs;
+//        Enumeration<String> words = _invertedIndex.keys();
+//        
+//        while (words.hasMoreElements())
+//        {
+//            ht_docs = getWordDocsList(words.nextElement());
+//            docs = ht_docs.keys();
+//            while (docs.hasMoreElements())
+//            {
+//                
+//            }
+//        }
+//        
+//        return list_docs;
+//    }
     
     public int addAppearance(String word_str, String doc_str)
     {
@@ -107,6 +134,54 @@ public class InvertedIndex {
     }
     
     
+    public void persistWords(IDbManager db) throws SQLException
+    {
+        ResultSet rs = db.execute("SELECT word_value FROM  `words`");
+        while (rs.next())
+        {
+            String current_word = rs.getString("word_value");
+            if (_invertedIndex.containsKey(current_word));
+            {
+                _invertedIndex.remove(current_word);
+                System.out.println("{" + current_word + "} : already exists in DB");
+            }
+        }       
+        
+        Enumeration<String> keys = _invertedIndex.keys();
+        
+        while (keys.hasMoreElements())
+        {
+            String key = keys.nextElement();
+            String query = "Insert into words(word_value) values ('" + key + "');";
+            // System.out.println(query);
+            db.executeUpdate(query);
+        }
+        
+    }
+   
+    public void persistPairs(IDbManager db, Document doc) throws SQLException {
+        Enumeration<String> words = _invertedIndex.keys();
+        
+        while (words.hasMoreElements())
+        {
+            int word_id = -1;
+            String word = words.nextElement();
+            String q = "SELECT word_id FROM `words` WHERE word_value= '"+ word + "'";
+            System.err.println(q);
+            ResultSet rs = db.execute(q);
+            if (rs.next())
+                 word_id = rs.getInt("word_id");
+            if (word_id != -1)
+            {
+                String query = "Insert into pairs(pair_word_id, pair_document_id, pair_frequency) values("+ word_id + ", " + doc.getId() + ", " + getFrequency(word, doc.getName()) +  ") ";
+                System.err.println(query);
+                db.executeUpdate(query);
+            }
+            
+            
+        }
+    }
+    
     /* ---------------------------------------------------------------- */
     /* ------------------------ OUTPUT -------------------------------- */    
     
@@ -121,4 +196,6 @@ public class InvertedIndex {
         
         return ret.toString();
     }
+
+
 }
