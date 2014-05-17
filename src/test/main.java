@@ -34,6 +34,10 @@ public class main {
         
         // Creation of the scanner to get the input
         Scanner s = new Scanner(System.in);
+        System.out.println("Database :");
+        System.out.println(Tools.ANSI_BLUE + "-> Words");
+        System.out.println(Tools.ANSI_GREEN + "-> Documents");
+        System.out.println(Tools.ANSI_PURPLE + "-> Pairs (Document, Word)");
         System.out.println("1. Collector");
         System.out.println("2. Indexador");
         System.out.println("What do yo want to lauch ?");
@@ -42,38 +46,30 @@ public class main {
         
         if (choose.compareTo("1") == 0)
         {
-            System.out.println("------ ---------------------------");
-            System.out.println("            Collector");
-            
-            // We fill the queue with the default value of the class
+            System.out.println("---------------------------------\n            Collector");
+
             Queue urls = new LinkedList();
-            
             urls.add("http://www.traducteur-assermente-lyon.fr/");
             //urls.add("http://www.kram47.fr");
             //urls.add("http://www.stf.jus.br/portal/principal/principal.asp");
             //urls.add("http://www.camara.gov.br");
             //urls.add("http://www.senado.gov.br/");
 
-            // We Launch the collector
             Collector myColector  = new Collector();
             myColector.setUrls(urls);
-                    
             myColector.run();
         }
         else if (choose.compareTo("2") == 0)
         {
-            System.out.println("---------------------------------");
-            System.out.println("            Indexador");
-            System.out.println("---------------------------------");
             Indexador indexador = new Indexador();
+            
+            System.out.println("---------------------------------\n            Indexador\n---------------------------------");
             try 
             {
                 indexador.run();
             }
             catch (SQLException ex) 
-            {
-                Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            { Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex); }
         }
               
     }
