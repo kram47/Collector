@@ -15,7 +15,9 @@ import java.util.Queue;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import processador.Processador;
+import screen.Screen;
 
 /**
  *
@@ -41,6 +43,7 @@ public class main {
         System.out.println("1. Collector");
         System.out.println("2. Indexador");
         System.out.println("3. Processador");
+        System.out.println("4. Interface");
         System.out.println("What do yo want to launch ?");
         String choose = s.next();
         
@@ -82,6 +85,12 @@ public class main {
             catch (SQLException ex) 
             { Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex); }
         }
+        else if (choose.compareTo("4") == 0)
+        {
+            JFrame frame = new Screen();
+        }
+    
+            
               
     }
 }
