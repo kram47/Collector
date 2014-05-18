@@ -37,8 +37,10 @@ CREATE TABLE IF NOT EXISTS documents
     document_name       TEXT NOT NULL,
     document_url        TEXT NOT NULL,
     document_title      TEXT NOT NULL,
-    document_content    TEXT NULL,
-    document_r          FLOAT NULL,
+    document_content    TEXT NOT NULL,
+    document_r_sum      FLOAT NULL,
+    document_r_square   FLOAT NULL,
+    document_similarity FLOAT NULL,
     document_md5        VARCHAR( 32 ) NOT NULL
  );
 

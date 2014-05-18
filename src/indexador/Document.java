@@ -18,7 +18,8 @@ public class Document {
     private String      _url;
     private String      _title;
     private String      _content;
-    private float       _r;
+    private float       _r_sum;
+    private float       _r_square;
     private String[]    _words;
     
 
@@ -92,19 +93,34 @@ public class Document {
     }
     
     /**
-     * @return the _r
+     * @return the _r_sum
      */
-    public float getR() {
-        return _r;
+    public float getR_sum() {
+        return _r_sum;
     }
 
     /**
-     * @param r the _r to set
+     * @param r_sum the _r_sum to set
      */
-    public void setR(float r) {
-        this._r = r;
+    public void setR_sum(float r_sum) {
+        this._r_sum = r_sum;
     }
 
+    /**
+     * @return the _r_square
+     */
+    public float getR_square() {
+        return _r_square;
+    }
+
+    /**
+     * @param r_square the _r_square to set
+     */
+    public void setR_square(float r_square) {
+        this._r_square = r_square;
+    }
+    
+    
     /**
      * @return the _words
      */
@@ -136,6 +152,7 @@ public class Document {
 
     /* ---------------------------------------------------------------- */
     /* ------------------------ METHODS ------------------------------- */        
+
 
 
     

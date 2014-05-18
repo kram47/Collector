@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.regex.*;
+import test.Tools;
 
 /**
  *
@@ -27,7 +28,6 @@ public class Collector {
   Queue     urls = new LinkedList();
   String    urlRoot = new String();
   String    currentPage = new String ();
-  
   Queue     newUrls = new LinkedList();
   
   
@@ -77,55 +77,18 @@ public class Collector {
       return page.toString ();
     }
 
-    public String    replaceAccents(String page)
-    {
-        /** 
-         * Replacing the HTML encoding 
-         * '&eacute;' => 'é' => e
-         */
-        System.out.println("avant: " + page);
-        page = page.replaceAll("\\&(.)(.*?);", "$1");
-        
-        /**
-         * Replacing directly the accents 
-         * 'é' => 'e'
-         */
-        String[][] accents = {  {"e", "é", "è", "ê"}, 
-                                {"a", "á", "à", "â", "ã"},
-                                {"i", "í", "ì", "î"},
-                                {"o", "ó", "ò", "ô", "õ"},
-                                {"u", "ú", "ù", "û"},
-                                {"c", "ç"},
-                                {"n", "ñ"} };
-        
-        for (String[] letters : accents)
-        {
-            String withoutAccent = letters[0];
-            for (String pattern : letters)
-            {
-                if (pattern != withoutAccent)
-                    page = page.replaceAll(pattern, withoutAccent);
-            }
-        }
-        
-        System.out.println("apres: " + page);
-        return page;
-    }
-
     
     /**
      * Store a sketch of the page
      * @param page
      * @param name 
      */
-    public void       storePages (String page, String name, MyUrl myurl) {
-        
-        page = page.replaceAll("\\<div id=\"divNaoImprimir\">.*</div>", "");
-        page = page.replaceAll("\\<td width=\"48%\" valign=\"top\">.*</td>", "");
-        page = page.replaceAll("\\<div id=\"divImpressao\" style=\"min-height:150px;\">.*</div>", "");
+    public void       storePages (String page, String name, MyUrl myurl) 
+    {
+        page = page.replaceAll("\\<script[^>]*?>.*?</script>", "");
         page = page.replaceAll("\\<[^<]*>", "");
         page = page.replaceAll("\\<!--*-->", "");
-        page = replaceAccents(page);
+        page = Tools.replaceAccents(page);
         Md5Manager md = new Md5Manager();
         String md5 = md.getMd5String(page);
 

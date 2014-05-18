@@ -59,19 +59,6 @@ public class InvertedIndex {
         return freq;
     }
     
-    public Hashtable<String, Integer> getWordDocsList(String word_str)
-    {
-        Hashtable<String, Integer> docs = null;
-        
-        if (this._invertedIndex.containsKey(word_str))
-        {
-            docs = this._invertedIndex.get(word_str);
-            System.out.println("The docs (and frequencies) of '"+ word_str +"' are : " + docs.toString());
-        }
-        
-        return docs;
-    }
-    
     public int addAppearance(String word_str, String doc_str)
     {
         Hashtable<String, Integer> docs = null;
@@ -97,25 +84,7 @@ public class InvertedIndex {
         return 0;
     }
     
-    public String getVocabulary() 
-    {
-        StringBuilder sb = new StringBuilder();
-        Enumeration<String> keys = _invertedIndex.keys();
-        
-        sb.append("Vocabulary : ");
-        sb.append("{");
-        while (keys.hasMoreElements())
-        {
-            String key = keys.nextElement();
-            sb.append(key);
-            if (keys.hasMoreElements())
-                sb.append(", ");
-        }
-        sb.append("}");
-        
-        System.out.println(sb.toString());
-        return sb.toString();
-    }
+    
     
     public void persistWords(IDbManager db) throws SQLException
     {

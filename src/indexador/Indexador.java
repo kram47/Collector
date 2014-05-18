@@ -53,7 +53,7 @@ public class Indexador {
     /* ---------------------------------------------------------------- */
     /* ------------------------ METHODS ------------------------------- */  
     
-    private void extractCollectionSize() throws SQLException
+    private void        extractCollectionSize() throws SQLException
     {
         String query = "SELECT COUNT( * ) AS collectionSize FROM  `documents`";
         ResultSet rs = this._db.execute(query);
@@ -68,7 +68,7 @@ public class Indexador {
             this._collectionMax = rs.getInt("document_id");
     }
   
-    private Document getNextDocument(int i) throws SQLException
+    private Document    getNextDocument(int i) throws SQLException
     {
         Document doc = null;
         
@@ -86,18 +86,29 @@ public class Indexador {
         return doc;
     }
     
-    private String[] splitDocumentByWords(Document doc)
+    
+    public String       getVocabulary() throws SQLException
     {
-        String[] words = doc.getContent().split("[\\s\\W]+");
+        StringBuilder sb = new StringBuilder();
+        String query = "SELECT word_value FROM words;";
+        ResultSet rs = this._db.execute(query);
+        String word;
         
-        if (words != null)
-            doc.setWords(words);
-        return words;
+        sb.append("Vocabulary : {");
+        while(rs.next())
+        {
+            word = rs.getString("word_value");
+            sb.append("{"+word+"}");
+            if(rs.next())
+                sb.append(", ");
+        }
+        sb.append("}");
+        return sb.toString();
     }
     
-    private void calculateFrequencies() throws SQLException 
+    private void        calculateFrequencies() throws SQLException 
     {
-        for (int i = 1 ; i < this._collectionSize ; ++i)
+        for (int i = 1 ; i <= this._collectionMax ; ++i)
         {   
             Document current_doc = getNextDocument(i);
             if (current_doc == null)
@@ -108,12 +119,10 @@ public class Indexador {
             System.out.println(Tools.ANSI_GREEN + "current_doc.url = " + current_doc.getUrl() );
             System.out.println(Tools.ANSI_GREEN + "current_doc.title = " + current_doc.getTitle() );
 
-            this.splitDocumentByWords(current_doc);
+            current_doc.setWords(Tools.splitStringByWords(current_doc.getContent()));
             
             for (String current_word : current_doc.getWords())
-            {
                 _index.addAppearance(current_word, current_doc.getName());
-            }
             
             _index.persistWords(this._db);
             _index.persistPairs(this._db, current_doc);
@@ -121,7 +130,7 @@ public class Indexador {
         }
     }
     
-    private void calculateTF() throws SQLException
+    private void        calculateTF() throws SQLException
     {
         String query;
         
@@ -158,10 +167,7 @@ public class Indexador {
         }
     }    
     
-    
-    
-    
-    private void calculateIDF() throws SQLException
+    private void        calculateIDF() throws SQLException
     {
         String query = "SELECT * FROM words";
         ResultSet words = this._db.execute(query);
@@ -186,27 +192,78 @@ public class Indexador {
         }
     }
     
-    public void run () throws SQLException
+    private void        calculateWeight() throws SQLException
+    {
+        String query = "SELECT pair_document_id, pair_word_id FROM pairs";
+        ResultSet pairs = this._db.execute(query);
+        while (pairs.next())
+        {
+            int word_id = pairs.getInt("pair_word_id");
+            int document_id = pairs.getInt("pair_document_id");
+            
+            ResultSet word = this._db.execute("SELECT word_idf FROM words WHERE word_id="+word_id);    
+            if (word.next())
+            {
+                float idf = word.getFloat("word_idf");
+                query = "UPDATE pairs SET pair_w=pair_tf*"+ idf +" WHERE pair_document_id="+document_id+" AND pair_word_id="+word_id;
+                this._db.executeUpdate(query);
+                System.out.println(query);
+            }
+        }
+    }
+    
+    private void        calculateR() throws SQLException
+    {
+        String query;
+        float r_sum, r_square;
+        
+        for(int doc_id = 1 ; doc_id <= this._collectionMax ; ++doc_id)
+        {
+            r_sum = r_square = 0;
+            query = "SELECT pair_w FROM pairs WHERE pair_document_id="+doc_id;
+            System.out.println(query);
+            ResultSet rs = this._db.execute(query);
+            
+            while (rs.next())
+            {
+                float pair_w = rs.getFloat("pair_w");
+                //System.out.print(pair_w + "+");
+                r_sum += pair_w;
+                r_square += Math.pow(pair_w, 2);
+            }
+            if (r_sum != 0 && r_square != 0)
+            {
+                r_square = (float) Math.sqrt(r_square);
+                query = "UPDATE documents SET document_r_sum="+r_sum+", document_r_square="+r_square+" WHERE document_id="+doc_id;
+                //System.out.println(query);
+                this._db.executeUpdate(query);
+            }
+        }
+            
+    }
+    
+    public void         run () throws SQLException
     {
         this.extractCollectionSize();
         System.out.println("collectionSize = " + this._collectionSize);
         System.out.println("collectionMax = " + this._collectionMax);
 
-        System.out.println("Calculate Frequencies");
-        // this.calculateFrequencies();
-        System.out.println("Calculate TF");
-        // this.calculateTF();
-        System.out.println("Calculate IDF");
+        System.out.println("Calculate Frequencies ...");
+        this.calculateFrequencies();
+        System.out.println("Calculate TF ...");
+        this.calculateTF();
+        System.out.println("Calculate IDF ...");
         this.calculateIDF();
+        System.out.println("Calculate Weight ...");
+        this.calculateWeight();
+        System.out.println("Calculate R ...");
+        this.calculateR();
         
+        System.out.println(this.getVocabulary());
         
-//        TESTS 
-//        _index.toString();
-//        _index.getFrequency("mot39", "doc1");
-//        _index.getWordDocsList("mot2");
-//        _index.getVocabulary();
     }
 
+    
     
    
 }
