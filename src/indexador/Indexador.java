@@ -103,10 +103,10 @@ public class Indexador {
             if (current_doc == null)
                 continue;
 
+            System.out.println(Tools.ANSI_GREEN + "current_doc.id = " + current_doc.getId() );
             System.out.println(Tools.ANSI_GREEN + "current_doc.name = " + current_doc.getName() );
             System.out.println(Tools.ANSI_GREEN + "current_doc.url = " + current_doc.getUrl() );
             System.out.println(Tools.ANSI_GREEN + "current_doc.title = " + current_doc.getTitle() );
-            System.out.println(Tools.ANSI_GREEN + "current_doc.content = " + current_doc.getContent() );
 
             this.splitDocumentByWords(current_doc);
             
@@ -117,6 +117,7 @@ public class Indexador {
             
             _index.persistWords(this._db);
             _index.persistPairs(this._db, current_doc);
+            _index.flush();
         }
     }
     
@@ -157,9 +158,32 @@ public class Indexador {
         }
     }    
     
+    
+    
+    
     private void calculateIDF() throws SQLException
     {
+        String query = "SELECT * FROM words";
+        ResultSet words = this._db.execute(query);
+        int nb_doc_appearance, word_id;
+        double idf;
         
+        while(words.next())
+        {
+            nb_doc_appearance = -1; word_id = -1; idf = -1;
+            word_id = words.getInt("word_id");
+            //System.out.printf("word{%s, %d}\n", words.getString("word_value"), word_id);
+            ResultSet rs = this._db.execute("SELECT COUNT(*) AS nb_doc_appearance FROM pairs WHERE pair_word_id="+word_id);
+            if (rs.next())
+                nb_doc_appearance = rs.getInt("nb_doc_appearance");
+            idf = (double) this._collectionSize / nb_doc_appearance;
+            //System.out.printf("idf = %d / %d = %f\n", this._collectionSize, nb_doc_appearance, idf);
+            
+            idf = Math.log(idf) / Math.log(2);
+            //System.out.printf("Math.log(idf) / Math.log(2) = %f\n", idf);
+            if (nb_doc_appearance != -1 && word_id != -1 && idf != -1)
+                this._db.executeUpdate("UPDATE words SET word_idf="+idf +" WHERE word_id="+ word_id);
+        }
     }
     
     public void run () throws SQLException
@@ -169,9 +193,9 @@ public class Indexador {
         System.out.println("collectionMax = " + this._collectionMax);
 
         System.out.println("Calculate Frequencies");
-        this.calculateFrequencies();
+        // this.calculateFrequencies();
         System.out.println("Calculate TF");
-        this.calculateTF();
+        // this.calculateTF();
         System.out.println("Calculate IDF");
         this.calculateIDF();
         

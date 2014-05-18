@@ -44,7 +44,7 @@ public class InvertedIndex {
     
     public int getFrequency(String word_str, String doc_str)
     {
-        int freq = 0;
+        int freq = -1;
         
         if (this._invertedIndex.containsKey(word_str))
             if (this._invertedIndex.get(word_str).containsKey(doc_str))
@@ -146,7 +146,8 @@ public class InvertedIndex {
         }
     }
    
-    public void persistPairs(IDbManager db, Document doc) throws SQLException {
+    public void persistPairs(IDbManager db, Document doc) throws SQLException 
+    {
         Enumeration<String> words = _invertedIndex.keys();
         
         while (words.hasMoreElements())
@@ -176,6 +177,11 @@ public class InvertedIndex {
             
             
         }
+    }
+    
+    public void flush()
+    {
+        this._invertedIndex.clear();
     }
     
     /* ---------------------------------------------------------------- */
