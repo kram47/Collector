@@ -80,13 +80,14 @@ public class main {
             Processador proc = new Processador("agence traduction");
             try 
             {
-                proc.run();
+                proc.run(5);
             } 
             catch (SQLException ex) 
             { Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex); }
         }
         else if (choose.compareTo("4") == 0)
         {
+            //JFrame frame = new Screen();
             JFrame frame = new Screen();
         }
     

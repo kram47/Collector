@@ -106,6 +106,22 @@ public class Indexador {
         return sb.toString();
     }
     
+    public static LinkedList<String>       getVocabularyList() throws SQLException
+    {
+        LinkedList<String> words = new LinkedList<String>();
+        String query = "SELECT word_value FROM words;";
+        ResultSet rs = DbManager.getInstance().execute(query);
+        String word;
+        
+        while(rs.next())
+        {
+            word = rs.getString("word_value");
+            words.add(word);
+        }
+        
+        return words;
+    }
+    
     private void        calculateFrequencies() throws SQLException 
     {
         for (int i = 1 ; i <= this._collectionMax ; ++i)

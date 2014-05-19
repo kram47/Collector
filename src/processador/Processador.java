@@ -83,8 +83,7 @@ public class Processador {
     private void process() throws SQLException
     {
         String query = "SELECT * FROM documents";
-        
-        System.out.println(query);        
+              
         ResultSet documents = this._db.execute(query);
         while (documents.next())
         {
@@ -119,16 +118,11 @@ public class Processador {
         return docs;
     }
     
-    public LinkedList<Document> run() throws SQLException
+    public LinkedList<Document> run(int nb_docs) throws SQLException
     {
         this.process();
         
-        LinkedList<Document> documents = this.getBestDocuments(5);  
-        for (Document doc : documents)
-        {
-            System.out.println("ID : " + doc.getId());
-            System.out.println("URL : " + doc.getUrl());
-        }
+        LinkedList<Document> documents = this.getBestDocuments(nb_docs);
         
         return documents;
     }
