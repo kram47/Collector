@@ -5,3 +5,5 @@ Topicos_SRI
 2- Launch the scriptBDD/database.sql to create the database  
 3- Import the project in your IDE  
 4- Launch the project  
+
+Read the doc at : http://kram47.fr/topicos_SRI/javadoc/
