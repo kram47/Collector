@@ -1,9 +1,18 @@
+
+
+
+
+
+
+
+
 package test;
 
 import indexador.Indexador;
 import collector.Collector;
 import collector.DbManager;
 import collector.IDbManager;
+import indexador.Document;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
@@ -15,9 +24,9 @@ import java.util.Queue;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import processador.Processador;
-import screen.Screen;
 
 /**
  *
@@ -33,6 +42,7 @@ public class main {
         IDbManager d = DbManager.getInstance();
 	d.setUrl("jdbc:mysql://localhost:3306/topicos_sri");
 	d.connect();
+
         
         // Creation of the scanner to get the input
         Scanner s = new Scanner(System.in);
@@ -42,9 +52,9 @@ public class main {
         System.out.println(Tools.ANSI_PURPLE + "-> Pairs (Document, Word)");
         System.out.println("1. Collector");
         System.out.println("2. Indexador");
-        System.out.println("3. Processador");
+        System.out.println("3. Pesquisador");
         System.out.println("4. Interface");
-        System.out.println("What do yo want to launch ?");
+        System.out.println("What do yo want to launch ? (Type the number)");
         String choose = s.next();
         
         
@@ -77,21 +87,33 @@ public class main {
         }
         else if (choose.compareTo("3") == 0)
         {
-            Processador proc = new Processador("agence traduction");
-            try 
+            System.out.println("(--STOP-- to quit)");
+            while (true)
             {
-                proc.run(5);
-            } 
-            catch (SQLException ex) 
-            { Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex); }
+                System.out.println("Query :");
+                String query = s.next();
+                if(query.compareTo("--STOP--") == 0)
+                    break;
+                Processador proc = new Processador(query);
+                LinkedList<Document> docs = new LinkedList<Document>();
+
+                try 
+                {
+                    docs = proc.run(5);
+
+                    for (Document doc : docs)
+                    {
+                        System.out.println(doc.getTitle() + " - " + doc.getUrl());
+                    }
+                } 
+                catch (SQLException ex) 
+                { Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex); }
+            }
         }
         else if (choose.compareTo("4") == 0)
         {
-            //JFrame frame = new Screen();
-            JFrame frame = new Screen();
+            screen.Screen.run();
         }
-    
-            
-              
+     
     }
 }

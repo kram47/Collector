@@ -48,13 +48,7 @@ public class InvertedIndex {
         
         if (this._invertedIndex.containsKey(word_str))
             if (this._invertedIndex.get(word_str).containsKey(doc_str))
-            {
                 freq = this._invertedIndex.get(word_str).get(doc_str);
-//                System.out.println(
-//                        "The frequency of the word '" + word_str +
-//                        "' in the doc '" + doc_str + 
-//                        "' is : " + this._invertedIndex.get(word_str).get(doc_str));
-            }
         
         return freq;
     }
@@ -93,10 +87,7 @@ public class InvertedIndex {
         {
             String current_word = rs.getString("word_value");
             if (_invertedIndex.containsKey(current_word));
-            {
                 this._wordsExceptions.add(current_word);                        // If the word already exists in index, we add exception to not add it in the Words table.
-                // System.out.print(Tools.ANSI_BLUE + "{" + current_word + "} : already in DB, ");
-            }
         }       
         
         Enumeration<String> words = _invertedIndex.keys();
@@ -107,11 +98,7 @@ public class InvertedIndex {
         {
             current_word = words.nextElement();
             if (!this._wordsExceptions.contains(current_word))
-            {
-                query = "INSERT INTO words(word_value) VALUES ('" + current_word + "');";
-                //System.out.println(query);
-                db.executeUpdate(query);
-            }
+                db.executeUpdate("INSERT INTO words(word_value) VALUES ('" + current_word + "');");
         }
     }
    
@@ -124,7 +111,6 @@ public class InvertedIndex {
             int word_id = -1;
             String word = words.nextElement();
             String q = "SELECT word_id FROM `words` WHERE word_value= '"+ word + "'";
-            //System.out.println(Tools.ANSI_BLUE + q);
             ResultSet rs = db.execute(q);
             if (rs.next())
                  word_id = rs.getInt("word_id");
@@ -136,15 +122,9 @@ public class InvertedIndex {
                 if (!rs2.next())
                 {
                     String query = "INSERT INTO pairs(pair_word_id, pair_document_id, pair_frequency) VALUES("+ word_id + ", " + doc_id + ", " + pair_frequency +  ") ";
-                    // System.out.println(Tools.ANSI_PURPLE + query);
                     db.executeUpdate(query);
-                }
-//                else
-//                    System.out.println("The pair already exists");
-                
+                }                
             }
-            
-            
         }
     }
     

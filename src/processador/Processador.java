@@ -92,7 +92,6 @@ public class Processador {
             if (!Float.isNaN(similarity))
             {
                 query = "UPDATE documents SET document_similarity="+ similarity +" WHERE document_id="+documents.getInt("document_id");
-                System.out.println(query);
                 this._db.executeUpdate(query);
             }          
         }
@@ -103,7 +102,6 @@ public class Processador {
         LinkedList<Document> docs = new LinkedList<Document>();
         String query = "SELECT * FROM documents ORDER BY document_similarity DESC";
         
-        System.out.println(query);        
         ResultSet rs = this._db.execute(query);
         while (rs.next() && nb != 0)
         {

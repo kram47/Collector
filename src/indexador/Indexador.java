@@ -19,6 +19,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import screen.MyListener;
 import test.Tools;
 
 
@@ -36,6 +37,7 @@ public class Indexador {
     IDbManager      _db;
     List<Document>  _collection;
     InvertedIndex   _index;
+    MyListener      _listener;
     
     
     /* ---------------------------------------------------------------- */
@@ -57,13 +59,11 @@ public class Indexador {
     {
         String query = "SELECT COUNT( * ) AS collectionSize FROM  `documents`";
         ResultSet rs = this._db.execute(query);
-        System.out.println(Tools.ANSI_GREEN + query);
         if (rs.next())
             this._collectionSize = rs.getInt("collectionSize");
         
         query = "SELECT document_id FROM  `documents` ORDER BY document_id DESC LIMIT 0,1";
         rs = this._db.execute(query);
-        System.out.println(Tools.ANSI_GREEN + query);
         if (rs.next())
             this._collectionMax = rs.getInt("document_id");
     }
@@ -74,7 +74,6 @@ public class Indexador {
         
         String query = "SELECT * FROM documents WHERE document_id = " + i + ";";
         ResultSet rs = this._db.execute(query);
-        System.out.println(Tools.ANSI_GREEN + query);
         if (rs.next())
         {
             doc = new Document(rs.getString("document_name"), null);
@@ -122,6 +121,23 @@ public class Indexador {
         return words;
     }
     
+    public static LinkedList<String>       getDocumentsList() throws SQLException
+    {
+        LinkedList<String> docs = new LinkedList<String>();
+        String query = "SELECT document_name, document_url FROM documents;";
+        ResultSet rs = DbManager.getInstance().execute(query);
+        String doc;
+        
+        while(rs.next())
+        {
+            doc = rs.getString("document_name");
+            doc += " - " + rs.getString("document_url");
+            docs.add(doc);
+        }
+        
+        return docs;
+    }
+    
     private void        calculateFrequencies() throws SQLException 
     {
         for (int i = 1 ; i <= this._collectionMax ; ++i)
@@ -130,10 +146,8 @@ public class Indexador {
             if (current_doc == null)
                 continue;
 
-            System.out.println(Tools.ANSI_GREEN + "current_doc.id = " + current_doc.getId() );
-            System.out.println(Tools.ANSI_GREEN + "current_doc.name = " + current_doc.getName() );
-            System.out.println(Tools.ANSI_GREEN + "current_doc.url = " + current_doc.getUrl() );
-            System.out.println(Tools.ANSI_GREEN + "current_doc.title = " + current_doc.getTitle() );
+            int percent = i * 100/this._collectionMax ;
+            System.out.println("["+percent+"%] Doc : " + current_doc.getId() + " - " + current_doc.getTitle() );
 
             current_doc.setWords(Tools.splitStringByWords(current_doc.getContent()));
             
@@ -144,6 +158,7 @@ public class Indexador {
             _index.persistPairs(this._db, current_doc);
             _index.flush();
         }
+        System.out.println("[100%]");
     }
     
     private void        calculateTF() throws SQLException
@@ -152,7 +167,6 @@ public class Indexador {
         
         for (int doc_id = 1 ; doc_id <= this._collectionMax ; ++doc_id)
         {  
-            System.out.println("Doc "+doc_id);
             ResultSet rs;
             int f_max = -1;
 
@@ -162,7 +176,11 @@ public class Indexador {
             query = "SELECT pair_frequency FROM pairs WHERE pair_document_id = " + doc_id + " ORDER BY pair_frequency DESC LIMIT 0, 1";
             rs = this._db.execute(query);
             if (rs.next())
+            {
+                int percent = doc_id * 100/this._collectionMax;
+                System.out.println("["+percent+"%] Doc " + doc_id);
                 f_max = rs.getInt("pair_frequency");
+            }
             
             /**
              * Get all words to loop on it to calculate the TF = f/f_max
@@ -178,9 +196,8 @@ public class Indexador {
                     _db.executeUpdate(query);
                 }
             }
-
-            
         }
+        System.out.println("[100%]");
     }    
     
     private void        calculateIDF() throws SQLException
@@ -194,15 +211,14 @@ public class Indexador {
         {
             nb_doc_appearance = -1; word_id = -1; idf = -1;
             word_id = words.getInt("word_id");
-            //System.out.printf("word{%s, %d}\n", words.getString("word_value"), word_id);
+            if(word_id%50 == 0)
+                System.out.println("Word : " + word_id);
             ResultSet rs = this._db.execute("SELECT COUNT(*) AS nb_doc_appearance FROM pairs WHERE pair_word_id="+word_id);
             if (rs.next())
                 nb_doc_appearance = rs.getInt("nb_doc_appearance");
             idf = (double) this._collectionSize / nb_doc_appearance;
-            //System.out.printf("idf = %d / %d = %f\n", this._collectionSize, nb_doc_appearance, idf);
             
             idf = Math.log(idf) / Math.log(2);
-            //System.out.printf("Math.log(idf) / Math.log(2) = %f\n", idf);
             if (nb_doc_appearance != -1 && word_id != -1 && idf != -1)
                 this._db.executeUpdate("UPDATE words SET word_idf="+idf +" WHERE word_id="+ word_id);
         }
@@ -223,7 +239,6 @@ public class Indexador {
                 float idf = word.getFloat("word_idf");
                 query = "UPDATE pairs SET pair_w=pair_tf*"+ idf +" WHERE pair_document_id="+document_id+" AND pair_word_id="+word_id;
                 this._db.executeUpdate(query);
-                System.out.println(query);
             }
         }
     }
@@ -237,13 +252,11 @@ public class Indexador {
         {
             r_sum = r_square = 0;
             query = "SELECT pair_w FROM pairs WHERE pair_document_id="+doc_id;
-            System.out.println(query);
             ResultSet rs = this._db.execute(query);
             
             while (rs.next())
             {
                 float pair_w = rs.getFloat("pair_w");
-                //System.out.print(pair_w + "+");
                 r_sum += pair_w;
                 r_square += Math.pow(pair_w, 2);
             }
@@ -251,31 +264,44 @@ public class Indexador {
             {
                 r_square = (float) Math.sqrt(r_square);
                 query = "UPDATE documents SET document_r_sum="+r_sum+", document_r_square="+r_square+" WHERE document_id="+doc_id;
-                //System.out.println(query);
                 this._db.executeUpdate(query);
             }
         }
-            
+    }
+    
+    public void         setListener(MyListener l)
+    {
+        this._listener = l;
     }
     
     public void         run () throws SQLException
     {
         this.extractCollectionSize();
-        System.out.println("collectionSize = " + this._collectionSize);
-        System.out.println("collectionMax = " + this._collectionMax);
 
         System.out.println("Calculate Frequencies ...");
         this.calculateFrequencies();
+        if (this._listener != null)
+            this._listener.onCalculateFrequenciesFinish();
+        
         System.out.println("Calculate TF ...");
         this.calculateTF();
+        if (this._listener != null)
+            this._listener.onCalculateTFFinish();
+        
         System.out.println("Calculate IDF ...");
         this.calculateIDF();
+        if (this._listener != null)
+            this._listener.onCalculateIDFFinish();
+        
         System.out.println("Calculate Weight ...");
         this.calculateWeight();
+        if (this._listener != null)
+            this._listener.onCalculateWFinish();
+        
         System.out.println("Calculate R ...");
         this.calculateR();
-        
-        System.out.println(this.getVocabulary());
+        if (this._listener != null)
+            this._listener.onCalculateRFinish();
         
     }
 

@@ -69,7 +69,7 @@ public class Collector {
         BufferedReader buffer = new BufferedReader (reader);
 
         String line;
-        while ((line = buffer.readLine()) != null) 
+        while ((line = buffer.readLine()) != null)
           page.append(line);
 
       } catch (Exception e) {  System.err.println("Error : unable to collect page: " + myurl.getLink() + " ## Because :" + e); }
@@ -83,8 +83,20 @@ public class Collector {
      * @param page
      * @param name 
      */
-    public void       storePages (String page, String name, MyUrl myurl) 
+    public void       storePages(String page, String name, MyUrl myurl) 
     {
+        String title = "";
+        Pattern p=Pattern.compile("<title>([^<]+)<\\/title>");
+        Matcher m=p.matcher(this.currentPage);
+        if (m.find())
+        {
+            title = m.group().replaceAll("\\s","");
+            title = title.replace("<title>","");
+            title = title.replace("</title>","");
+            if (title.length() > 30)
+                title = title.substring(0,20) + "...";
+        }
+
         page = page.replaceAll("\\<script[^>]*?>.*?</script>", "");
         page = page.replaceAll("\\<[^<]*>", "");
         page = page.replaceAll("\\<!--*-->", "");
@@ -93,7 +105,8 @@ public class Collector {
         String md5 = md.getMd5String(page);
 
         IDbManager d = DbManager.getInstance();
-        String query = "INSERT INTO documents(document_name, document_url, document_title, document_content, document_md5) VALUES('" + name + "', '"+ myurl.getLink() +"', '', ?, '" + md5 + "');";
+        String query = "INSERT INTO documents(document_name, document_url, document_title, document_content, document_md5) VALUES('" + name + "', '"+ myurl.getLink() +"', '"+title+"', ?, '" + md5 + "');";
+        System.out.println(query);
         d.executeUpdatePrepared(query, page);
     }
 
