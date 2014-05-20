@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Manager of the MD5 Encoding
  * @author Marc
  */
 public class Md5Manager {
@@ -15,7 +15,7 @@ public class Md5Manager {
     public          Md5Manager() {    }
     
     /**
-     * Get the MD5 from string
+     * Get the MD5 from string <br />
      * Convert the MD5 into a string
      * @param str to get the MD5 from
      * @return md5

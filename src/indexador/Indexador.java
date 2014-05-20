@@ -24,7 +24,7 @@ import test.Tools;
 
 
 /**
- *
+ * Main class of Indexador
  * @author 492403
  */
 public class Indexador {
@@ -32,17 +32,43 @@ public class Indexador {
     /* ---------------------------------------------------------------- */
     /* ---------------------- PROPERTIES ------------------------------ */  
     
+    /**
+     * Size of table Documents in DB
+     */
     int             _collectionSize;
+    
+    /**
+     * Highest ID of the table Documents in DB
+     */
     int             _collectionMax;
+    
+    /**
+     * Database manager (to execute queries)
+     */
     IDbManager      _db;
+    
+    /**
+     * Collection of document
+     */
     List<Document>  _collection;
+    
+    /**
+     * Inverted Index
+     */
     InvertedIndex   _index;
+    
+    /**
+     * Listener to send datas/events to the interface
+     */
     MyListener      _listener;
     
     
     /* ---------------------------------------------------------------- */
     /* ---------------------- CONSTRUCTOR  ---------------------------- */        
 
+    /**
+     * Main constructor
+     */
     public Indexador() 
     {
         this._collectionSize = -1;
@@ -55,6 +81,11 @@ public class Indexador {
     /* ---------------------------------------------------------------- */
     /* ------------------------ METHODS ------------------------------- */  
     
+    /**
+     * Extract the size of the collection (Number of lines in 'documents' in DB) <br />
+     * Extract the highest id of the collection
+     * @throws SQLException 
+     */
     private void        extractCollectionSize() throws SQLException
     {
         String query = "SELECT COUNT( * ) AS collectionSize FROM  `documents`";
@@ -68,6 +99,12 @@ public class Indexador {
             this._collectionMax = rs.getInt("document_id");
     }
   
+    /**
+     * Get the next document in the database and fill a Document object with the datas
+     * @param i The index of the document
+     * @return the doc created
+     * @throws SQLException 
+     */
     private Document    getNextDocument(int i) throws SQLException
     {
         Document doc = null;
@@ -86,6 +123,12 @@ public class Indexador {
     }
     
     
+    /**
+     * Get all the words in the database <br />
+     * The format of the string is : Vocabulary : {{word1},{word2},{word3}}
+     * @return The formatted string with all the words
+     * @throws SQLException 
+     */
     public String       getVocabulary() throws SQLException
     {
         StringBuilder sb = new StringBuilder();
@@ -105,6 +148,11 @@ public class Indexador {
         return sb.toString();
     }
     
+    /**
+     * Get all the words in the database
+     * @return List of all words
+     * @throws SQLException 
+     */
     public static LinkedList<String>       getVocabularyList() throws SQLException
     {
         LinkedList<String> words = new LinkedList<String>();
@@ -121,6 +169,11 @@ public class Indexador {
         return words;
     }
     
+    /**
+     * Get all the documents in the database <br />
+     * @return A list with all documents
+     * @throws SQLException 
+     */
     public static LinkedList<String>       getDocumentsList() throws SQLException
     {
         LinkedList<String> docs = new LinkedList<String>();
@@ -138,6 +191,11 @@ public class Indexador {
         return docs;
     }
     
+    /**
+     * Calculate All frequencies of words in all documents<br />
+     * Loop on all documents and get frequencies of all words in each document.
+     * @throws SQLException 
+     */
     private void        calculateFrequencies() throws SQLException 
     {
         for (int i = 1 ; i <= this._collectionMax ; ++i)
@@ -161,6 +219,11 @@ public class Indexador {
         System.out.println("[100%]");
     }
     
+    /**
+     * Calculate All TF of words in all documents<br />
+     * Loop on all documents and get the TF of all words in each document.
+     * @throws SQLException 
+     */
     private void        calculateTF() throws SQLException
     {
         String query;
@@ -200,6 +263,11 @@ public class Indexador {
         System.out.println("[100%]");
     }    
     
+    /**
+     * Calculate All IDF of all words <br />
+     * Loop on all words and get IDF 
+     * @throws SQLException 
+     */
     private void        calculateIDF() throws SQLException
     {
         String query = "SELECT * FROM words";
@@ -224,6 +292,12 @@ public class Indexador {
         }
     }
     
+    
+    /**
+     * Calculate All Weight (W) of all pairs(word,document) <br />
+     * Loop on all pairs(word,document) and get weight
+     * @throws SQLException 
+     */
     private void        calculateWeight() throws SQLException
     {
         String query = "SELECT pair_document_id, pair_word_id FROM pairs";
@@ -243,6 +317,12 @@ public class Indexador {
         }
     }
     
+    
+    /**
+     * Calculate All R of all pairs(word,document) <br />
+     * Loop on all document and get the R 
+     * @throws SQLException 
+     */
     private void        calculateR() throws SQLException
     {
         String query;
@@ -269,11 +349,26 @@ public class Indexador {
         }
     }
     
+    /**
+     * Set the listener to comunicate with the interface
+     * @param l 
+     */
     public void         setListener(MyListener l)
     {
         this._listener = l;
     }
     
+        
+    /**
+     * Run the indexador <br /> 
+     * The main loop is here <br />
+     * Launch Every part of the indexador <br />
+     * - Frequencies<br />
+     * - TF<br />
+     * - IDF<br />
+     * - Weight<br />
+     * - R
+     */
     public void         run () throws SQLException
     {
         this.extractCollectionSize();

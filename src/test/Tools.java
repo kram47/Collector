@@ -6,7 +6,7 @@
 package test;
 
 /**
- *
+ * Package of useful tools (All methods are static)
  * @author Marc
  */
 public class Tools {
@@ -42,6 +42,13 @@ public class Tools {
     /* ---------------------------------------------------------------- */
     /* ------------------------ METHODS ------------------------------- */     
 
+    /**
+     * Replace all type of accent with the same letter without accent <br/>
+     * Works with direct accent like : 'é' and HTML encoding like : '&eacute;'
+     * 
+     * @param page the string we want to get rid of the accent from 
+     * @return 
+     */
     public static String        replaceAccents(String page)
     {
         /** 
@@ -75,24 +82,18 @@ public class Tools {
         return page;
     }
 
+    
+    /**
+     * Splt a string in a list of words. <br />
+     * Use the \s and \W to split (All type of spaces and non-character)
+     * @param str
+     * @return 
+     */
     public static String[]      splitStringByWords(String str)
     {
         String[] words = str.split("[\\W\\s]+");
         
         return words;
-    }
-
-    /* ---------------------------------------------------------------- */
-    /* ------------------------ OUTPUT -------------------------------- */   
-
-    public String toString()
-    {
-        StringBuilder ret = new StringBuilder();
-        
-        ret.append("Tools : {}");
-        System.out.println(ret.toString());
-        
-        return ret.toString();
     }
 
 

@@ -8,7 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- *
+ * Encapsulation of an URL
  * @author Marc
  */
 public class MyUrl {
@@ -23,7 +23,10 @@ public class MyUrl {
   /* ---------------------------------------------------------------- */
   /* ---------------------- CONSTRUCTOR  ---------------------------- */        
     
-    
+    /**
+     * Constructor of the class
+     * @param _link Access link of the URL
+     */
     public MyUrl (String _link) {
         this.link = _link;
         try {
@@ -57,10 +60,10 @@ public class MyUrl {
   /* ---------------------------------------------------------------- */
   /* ------------------------ METHODS ------------------------------- */            
     
-    public String    relativeToAbsolute(String root) {
-        String url = link.replaceFirst("/", root + "/");      
-        return url;
-    }
+//    public String    relativeToAbsolute(String root) {
+//        String url = link.replaceFirst("/", root + "/");      
+//        return url;
+//    }
     
     public String   getFile()
     {
@@ -92,12 +95,13 @@ public class MyUrl {
         return ret.toString();
     }
     
-    // Get rid of css, javascript, icon, # link, empty strings, internal server like '../'
-    // And then we add the link to list of newUrls
+    /**
+     * Get rid of css, javascript, icon, # link, empty strings, internal server like '../'
+     */ 
     public boolean isFileCorrect()
     {
         String[] extensions = { "css", "scss", "sass", "js", 
-                                "ico", "jpg", "jpeg", "bmp", "png", "psd", "jpf", 
+                                "ico", "jpg", "jpeg", "bmp", "png", "psd", "jpf", "pdf",
                                 "mp3", "mp4", "wav", "flac", "ogg", "m4a", "aac", "m3u",
                                 "m2k", "avi", "mkv", "wmp", "mov"};
         

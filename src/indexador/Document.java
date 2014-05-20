@@ -5,7 +5,7 @@
 package indexador;
 
 /**
- *
+ * Represent the object Document in Database
  * @author 492403
  */
 public class Document {
@@ -13,19 +13,55 @@ public class Document {
     /* ---------------------------------------------------------------- */
     /* ---------------------- PROPERTIES ------------------------------ */      
     
+    /**
+     * Document's id
+     */
     private int         _id;
+    
+    /**
+     * Document's name
+     */
     private String      _name;
+    
+    /**
+     * Document's URL
+     */
     private String      _url;
+    
+    /**
+     * Document's Title
+     */
     private String      _title;
+    
+    /**
+     * Document's content
+     */
     private String      _content;
+    
+    /**
+     * Document's r_sum -> part on the top of vectorial method function
+     */
     private float       _r_sum;
+    
+    /**
+     * Document's r_sum -> part on the bottom of vectorial method function
+     */
     private float       _r_square;
+    
+    /**
+     * Document's list of words
+     */
     private String[]    _words;
     
 
     /* ---------------------------------------------------------------- */
     /* ---------------------- CONSTRUCTOR  ---------------------------- */     
     
+    /**
+     * Main Constructor 
+     * @param name name of the document
+     * @param words List of words
+     */
     public Document (String name, String[] words)
     {
         this._name = name;

@@ -3,6 +3,10 @@ package collector;
 import java.sql.Connection;
 import java.sql.ResultSet;
 
+/**
+ * Interface for the encapsulation of database connection
+ * @author Marc
+ */
 public interface IDbManager {
         
         // GETTERS - SETTERS    

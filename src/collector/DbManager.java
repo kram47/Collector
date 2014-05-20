@@ -13,7 +13,7 @@ import sun.print.BackgroundLookupListener;
 
 
 /**
- *
+ * Encapsulation of database connection
  * @author Marc
  */
 public class DbManager implements IDbManager {
@@ -37,7 +37,7 @@ public class DbManager implements IDbManager {
   /* ------------------ CONSTRUCTOR (Singleton) --------------------- */        
         
         
-	/** Encapsulation du constructeur (singleton) */
+	/** Encapsulation of constructor (singleton) */
 	public static IDbManager getInstance(){
 		if (dbmanager == null)
 			dbmanager = new DbManager("", "root", "");
@@ -140,7 +140,8 @@ public class DbManager implements IDbManager {
         
         /**
 	 * Exécute une requète type insertInto
-	 * 
+	 * @param query Contient la requête à éxécuter.
+         * 
 	 */
         public void         executeUpdate(String requete) {
             try {
@@ -155,7 +156,8 @@ public class DbManager implements IDbManager {
         
         /**
 	 * Exécute une requète type insertInto en prepared Statement
-	 * 
+	 * @param query Contient la requête à éxécuter.
+         * @param pageHtml Contient la page HTML à remplacer dans la requête.
 	 */
         public void         executeUpdatePrepared(String query, String pageHtml) {
             try {

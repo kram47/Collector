@@ -29,7 +29,7 @@ import javax.swing.JFrame;
 import processador.Processador;
 
 /**
- *
+ * Main class, where we launch everything
  * @author Marc
  */
 public class main {
@@ -63,8 +63,8 @@ public class main {
             System.out.println("---------------------------------\n            Collector");
 
             Queue urls = new LinkedList();
-            urls.add("http://www.traducteur-assermente-lyon.fr/");
-            //urls.add("http://www.kram47.fr");
+            
+            urls.add("http://www.kram47.fr");
             //urls.add("http://www.stf.jus.br/portal/principal/principal.asp");
             //urls.add("http://www.camara.gov.br");
             //urls.add("http://www.senado.gov.br/");

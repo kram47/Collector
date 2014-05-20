@@ -37,7 +37,6 @@ public class Screen extends javax.swing.JFrame implements MyListener {
     public Screen() {
         initComponents();
         
-        urls.add("http://www.traducteur-assermente-lyon.fr/");
         urls.add("http://www.kram47.fr");
         //urls.add("http://www.stf.jus.br/portal/principal/principal.asp");
         //urls.add("http://www.camara.gov.br");

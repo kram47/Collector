@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import test.Tools;
 
 /**
- *
+ * Content and Method of the inverted index
  * @author 492403
  */
 public class InvertedIndex {
@@ -25,13 +25,23 @@ public class InvertedIndex {
     /* ---------------------------------------------------------------- */
     /* ---------------------- PROPERTIES ------------------------------ */
     
+    /**
+     * Double hashtable with word, document, frequency
+     */
     Hashtable<String, Hashtable<String, Integer>>   _invertedIndex;
+    
+    /**
+     * Exception of words to not put in the database
+     */
     List<String>                                    _wordsExceptions;
 
     
     /* ---------------------------------------------------------------- */
     /* ---------------------- CONSTRUCTOR  ---------------------------- */      
             
+    /**
+     * Main constructor
+     */
     public InvertedIndex()
     {
         _invertedIndex = new Hashtable<String, Hashtable<String, Integer>>();
@@ -42,6 +52,12 @@ public class InvertedIndex {
     /* ---------------------------------------------------------------- */
     /* ------------------------ METHODS ------------------------------- */         
     
+    /**
+     * Get the frequency of the given pair
+     * @param word_str the word of the pair
+     * @param doc_str the document of the pair
+     * @return the frequency of the pair
+     */
     public int getFrequency(String word_str, String doc_str)
     {
         int freq = -1;
@@ -53,6 +69,12 @@ public class InvertedIndex {
         return freq;
     }
     
+    /**
+     * Add an appearance in the pair (increment the frequency)
+     * @param word_str the word of the pair
+     * @param doc_str the document of the pair
+     * @return 0
+     */
     public int addAppearance(String word_str, String doc_str)
     {
         Hashtable<String, Integer> docs = null;
@@ -79,7 +101,11 @@ public class InvertedIndex {
     }
     
     
-    
+    /**
+     * Save the words of the index in database
+     * @param db the Database manager
+     * @throws SQLException 
+     */
     public void persistWords(IDbManager db) throws SQLException
     {
         ResultSet rs = db.execute("SELECT word_value FROM  `words`");
@@ -101,7 +127,13 @@ public class InvertedIndex {
                 db.executeUpdate("INSERT INTO words(word_value) VALUES ('" + current_word + "');");
         }
     }
-   
+    
+    
+    /**
+     * Save the pairs(word, document) of the index in database
+     * @param db the Database manager
+     * @throws SQLException 
+     */   
     public void persistPairs(IDbManager db, Document doc) throws SQLException 
     {
         Enumeration<String> words = _invertedIndex.keys();
@@ -128,6 +160,10 @@ public class InvertedIndex {
         }
     }
     
+    
+    /**
+     * Empty the database
+     */
     public void flush()
     {
         this._invertedIndex.clear();

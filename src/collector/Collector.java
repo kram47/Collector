@@ -17,17 +17,32 @@ import java.util.regex.*;
 import test.Tools;
 
 /**
- *
+ * The collector main class
  * @author Marc
  */
 public class Collector {
   
   /* ---------------------------------------------------------------- */
   /* ---------------------- PROPERTIES ------------------------------ */
-    
+  
+  /**
+   * List of urls to parse
+   */  
   Queue     urls = new LinkedList();
+  
+  /**
+   * The root (host) of the current site (ex: www.site.com/bla/bla root-> www.site.com)
+   */  
   String    urlRoot = new String();
+  
+  /**
+   * The content of the current page
+   */
   String    currentPage = new String ();
+  
+  /**
+   * List of urls in a page. (All the href of the current page)
+   */
   Queue     newUrls = new LinkedList();
   
   
@@ -236,9 +251,9 @@ public class Collector {
 
 
     /**
-     * If the root is not the than the current root : 
-     *   - it's another website 
-     *   - we store it in url Queue
+     * If the root is not the than the current root : <br />
+     *   - it's another website <br />
+     *   - we store it in url Queue<br />
      * @param link
      * @return true if it's a new root
      */
@@ -264,11 +279,11 @@ public class Collector {
         
     
     /**
-     * Run the collector
-     * The main loop is here
-     * Connect to the URLs of the queue
-     * Create another URLs queue (newUrls) for every website
-     * Store the pages in database
+     * Run the collector <br /> 
+     * The main loop is here <br />
+     * Connect to the URLs of the queue <br />
+     * Create another URLs queue (newUrls) for every website <br />
+     * Store the pages in database <br />
      */
     public void       run() {
         int i = 0;
